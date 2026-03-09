@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticky Vibes | Premium Stickers</title>
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --background: #f9f9f9;
+            --text: #2d3436;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--white);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .cart-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .cart-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Product Grid */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            text-align: center;
+            padding-bottom: 1rem;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #eee;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .add-btn {
+            background-color: var(--text);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .add-btn:hover {
+            background-color: #000;
+        }
+
+        /* Cart Modal */
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            right: -100%; /* Hidden by default */
+            width: 350px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            z-index: 200;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-modal.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .cart-total {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .checkout-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 150;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .cart-modal {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">Sticky Vibes</div>
+        <button class="cart-btn" onclick="toggleCart()">
+            Cart (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Stick it to the Man!</h1>
+        <p>High quality vinyl stickers for your laptop, water bottle, and life.</p>
+    </section>
+
+    <!-- Product Grid -->
+    <div class="container">
+        <div class="product-grid" id="product-list">
+            <!-- Products will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Cart Overlay & Modal -->
+    <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p>Your cart is empty.</p>
+        </div>
+        <div class="cart-total">
+            <span>Total:</span>
+            <span id="cart-total-price">$0.00</span>
+        </div>
+        <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+
+        // 1. Product Data (You can add more here)
+        const products = [
+            { id: 1, name: "Cyber Cat", price: 3.99, image: "https://via.placeholder.com/300/6c5ce7/ffffff?text=Cyber+Cat" },
+            { id: 2, name: "Retro Mushroom", price: 2.50, image: "https://via.placeholder.com/300/a29bfe/ffffff?text=Mushroom" },
+            { id: 3, name: "Coffee Addict", price: 4.00, image: "https://via.placeholder.com/300/2d3436/ffffff?text=Coffee" },
+            { id: 4, name: "Space Explorer", price: 3.50, image: "https://via.placeholder.com/300/0984e3/ffffff?text=Space" },
+            { id: 5, name: "Plant Mom", price: 3.00, image: "https://via.placeholder.com/300/00b894/ffffff?text=Plant" },
+            { id: 6, name: "Donut Love", price: 2.99, image: "https://via.placeholder.com/300/e17055/ffffff?text=Donut" },
+        ];
+
+        let cart = [];
+
+        // 2. Render Products to Page
+        const productList = document.getElementById('product-list');
+
+        function renderProducts() {
+            productList.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <span class="product-price">$${product.price.toFixed(2)}</span>
+                        <button class="add-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 3. Cart Functions
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            updateCartUI();
+            toggleCart(true); // Open cart when item added
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total-price');
+
+            // Update Count
+            cartCount.innerText = cart.length;
+
+            // Calculate Total
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            cartTotal.innerText = '$' + total.toFixed(2);
+
+            // Render Cart Items
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+            } else {
+                cartItemsContainer.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            $${item.price.toFixed(2)}
+                        </div>
+                        <button onclick="removeFromCart(${index})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 4. Toggle Cart Modal
+        function toggleCart(forceOpen = false) {
+            const modal = document.getElementById('cart-modal');
+            const overlay = document.getElementById('overlay');
+            
+            if (forceOpen) {
+                modal.classList.add('active');
+                overlay.classList.add('active');
+            } else {
+                modal.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        // 5. Checkout Placeholder
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+            } else {
+                alert(`Thank you for your purchase! Total: $${cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)}`);
+                cart = [];
+                updateCartUI();
+                toggleCart();
+            }
+        }
+
+        // Initialize
+        renderProducts();
+
+    </script>
+</body>
+</html>
